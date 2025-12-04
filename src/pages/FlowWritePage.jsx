@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import { useAccount, useToken } from "../stores/account-store";
 import { useNavigate } from "react-router";
 import dayjs from "dayjs";
-import { addBulkExpense, addExpense, selectExpenseByPeriod } from "../util/DatabaseUtil";
+import {
+  addBulkExpense,
+  addExpense,
+  selectExpenseByPeriod,
+} from "../util/DatabaseUtil";
 
 function FlowWritePage() {
   const account = useAccount((s) => s.account);
+  const logout = useAccount((s) => s.clearAccount);
   const token = useToken((t) => t.token);
   const navigate = useNavigate();
 
@@ -69,6 +74,7 @@ function FlowWritePage() {
     });
   }
 
+  //여러건 넘기기
   function expenseBulkSubmitHandle(evt) {
     evt.preventDefault();
     const data = {
@@ -99,6 +105,13 @@ function FlowWritePage() {
     setEndDate(function (old) {
       return dayjs(old).add(1, "month").format("YYYY-MM-DD");
     });
+  }
+
+  function logoutHandle() {
+    if (window.confirm("로그아웃 하시겠습니까?")) {
+      logout();
+      window.location.reload();
+    }
   }
 
   // 로그인 체크
@@ -144,6 +157,13 @@ function FlowWritePage() {
             <h1 className="text-xl font-semibold">머니플로우</h1>
             <div className="text-sm text-gray-600">
               {account.nickname} ({account.email})
+              <button
+                onClick={logoutHandle}
+                type="button"
+                className="m-3 p-1 bg-white shadow rounded hover:bg-gray-100"
+              >
+                로그아웃
+              </button>
             </div>
           </header>
 
@@ -215,7 +235,7 @@ function FlowWritePage() {
                     <td className="p-2">
                       <input
                         type="date"
-                        className="border px-2 py-1 rounded w-full"
+                        className=" px-2 py-1 rounded w-full"
                         value={one.usedAt || ""}
                         onChange={(e) => {
                           const newPayment = [...payment];

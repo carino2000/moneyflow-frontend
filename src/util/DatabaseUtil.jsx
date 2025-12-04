@@ -17,87 +17,61 @@ function emailCheck(email) {
 }
 
 function emailCodeCheck(email) {
-  const formData = new FormData();
-  formData.append("email", email);
+  const data = { email };
   return fetch(serverAddr + "/validate/code/send", {
     method: "post",
-    body: formData,
+    body: JSON.stringify(data),
+    headers: {
+      "Content-type": "application/json",
+    },
   }).then(function (response) {
     return response.json();
   });
 }
 
-function insertAccount({ email, pw, nickname }) {
-  const formData = new FormData();
-  formData.append("email", email);
-  formData.append("pw", pw);
-  formData.append("nickname", nickname);
+function insertAccount(data) {
   return fetch(serverAddr + "/account/sign-in", {
     method: "post",
-    body: formData,
+    body: JSON.stringify(data),
+    headers: {
+      "Content-type": "application/json",
+    },
   }).then(function (response) {
     return response.json();
   });
 }
 
 function loginCheck(email, pw) {
-  const formData = new FormData();
-  formData.append("email", email);
-  formData.append("pw", pw);
+  const data = { email, pw };
   return fetch(serverAddr + "/account/log-in", {
     method: "post",
-    body: formData,
+    body: JSON.stringify(data),
+    headers: {
+      "Content-type": "application/json",
+    },
   }).then(function (response) {
     return response.json();
   });
 }
 
-function addBulkExpense({ accountId, token, payment }) {
-  const formData = new FormData();
-  formData.append("accountId", accountId);
-  //formData.append("items", payment);
-  for (let i = 0; i < payment.length; i++) {
-    const index = `items[${i}]`;
-    formData.append(`${index}.idx`, payment[i].idx);
-    formData.append(`${index}.usedAt`, payment[i].usedAt);
-    formData.append(`${index}.description`, payment[i].description);
-    formData.append(`${index}.cash`, payment[i].cash);
-    formData.append(`${index}.card`, payment[i].card);
-    formData.append(`${index}.category`, payment[i].category);
-    formData.append(`${index}.tag`, payment[i].tag);
-  }
+function addBulkExpense(data) {
   return fetch(serverAddr + "/expense/insert/bulk", {
     method: "post",
-    body: formData,
+    body: JSON.stringify(data),
     headers: {
       Token: token,
+      "Content-type": "application/json",
     },
   }).then((response) => response.json());
 }
 
-function addExpense({
-  token,
-  accountId,
-  usedAt,
-  description,
-  cash,
-  card,
-  category,
-  tag,
-}) {
-  const formData = new FormData();
-  formData.append("accountId", accountId);
-  formData.append("usedAt", usedAt);
-  formData.append("description", description);
-  formData.append("cash", cash);
-  formData.append("card", card);
-  formData.append("category", category);
-  formData.append("tag", tag);
+function addExpense(data) {
   return fetch(serverAddr + "/expense/insert/one", {
     method: "post",
-    body: formData,
+    body: JSON.stringify(data),
     headers: {
       Token: token,
+      "Content-type": "application/json",
     },
   }).then((response) => response.json());
 }
@@ -108,6 +82,7 @@ function selectExpenseByPeriod(accountId, startDate, endDate, token) {
     method: "get",
     headers: {
       Token: token,
+      "Content-type": "application/json",
     },
   }).then(function (response) {
     return response.json();
